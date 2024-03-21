@@ -27,6 +27,10 @@ app.use('/systems', systemsRouter);
 app.use('/groups', groupsRouter);
 app.use('/alters', altersRouter);
 
+app.use('humans.txt', (_req, res) => {
+    res.sendFile('humans.txt', { root: __dirname });
+});
+
 app.use((_req, _res, next) => {
     const error = new Error('Not found') as Error & { status: number };
     error.status = 404;

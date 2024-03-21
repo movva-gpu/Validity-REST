@@ -1,0 +1,17 @@
+/* TEAM */
+Creator: Danyella Strikann
+Mastodon:  danyella_strikann[at]piaille.fr
+GitHub: [at]movva-gpu
+Location: Troyes, France
+
+/* THANKS */
+Academind for his RESTful API tutorials
+All Express contributors for Express
+
+/* SITE */
+Last Update: 22/03/2024
+Lang: en
+Standards: JSON
+Frameworks: Express
+Softwares: Cursor and Webstorm (IDE), Postman (debug and requests), Windows and openSUSE WSL (OS), GitHub (VCS)
+Source: https://github.com/movva-gpu/Validity-REST

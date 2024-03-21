@@ -1,0 +1,32 @@
+{
+  "name": "validity-rest",
+  "module": "app.ts",
+  "type": "module",
+  "version": "0.1.0",
+  "repository": "https://github.com/movva-gpu/Validity-REST",
+  "author": {
+    "name": "Danyella Strikann",
+    "email": "danyellastrikann@duck.com"
+  },
+  "license": "MIT",
+  "scripts": {
+    "start": "bun app.ts",
+    "dev": "bun --watch app.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@types/body-parser": "^1.19.5",
+    "@types/express": "^4.17.21",
+    "@types/morgan": "^1.9.9",
+    "@types/uuid": "^9.0.8",
+    "body-parser": "^1.20.2",
+    "express": "^4.19.1",
+    "morgan": "^1.10.0",
+    "uuid": "^9.0.1"
+  }
+}

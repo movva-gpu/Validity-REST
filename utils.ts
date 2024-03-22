@@ -1,3 +1,4 @@
+import { NextFunction } from 'express';
 import * as uuid from 'uuid';
 
 export function isUUID(uid: string): boolean {
@@ -22,4 +23,31 @@ export function basicUUIDHandling(req: any, res: any): true | void {
         });
         return true;
     }
+}
+
+export type LogoOptions = {
+    square: string,
+    [shape: string]: string,
+    root: string
+};
+
+export function logoHandler(req: any, res: any, next: NextFunction, options: LogoOptions, onlyLogo = false): void {
+    if (onlyLogo) {
+        res.sendFile(options?.square, { root: options.root });
+        return;
+    }
+
+    for (const shape in options) {
+        if (shape === 'root') continue;
+        const optionShape = options[shape];
+        console.log(shape, optionShape);
+        if (shape === req.params.shape && optionShape) {
+            res.sendFile(optionShape, { root: options.root });
+            return;
+        }
+    }
+
+    const error = new Error('Invalid shape') as Error & { status: number };
+    error.status = 400;
+    next(error);
 }

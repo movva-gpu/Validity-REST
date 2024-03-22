@@ -1,5 +1,7 @@
 # Validity-REST
 
+RESTful API for [Validity](https://movva-gpu/Validity) discord bot.
+
 To install dependencies:
 
 ```bash

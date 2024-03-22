@@ -5,6 +5,8 @@ import bodyParser from 'body-parser';
 import systemsRouter from './API/routes/systems';
 import altersRouter from './API/routes/alters';
 import groupsRouter from './API/routes/groups';
+import othersRouter from './API/routes/others';
+import logoRouter from './API/routes/logo';
 
 const app = express();
 const port = process.env.PORT || 3030;
@@ -26,10 +28,8 @@ app.use((req, res, next) => {
 app.use('/systems', systemsRouter);
 app.use('/groups', groupsRouter);
 app.use('/alters', altersRouter);
-
-app.use('humans.txt', (_req, res) => {
-    res.sendFile('humans.txt', { root: __dirname });
-});
+app.use('/logo', logoRouter);
+app.use('/', othersRouter);
 
 app.use((_req, _res, next) => {
     const error = new Error('Not found') as Error & { status: number };

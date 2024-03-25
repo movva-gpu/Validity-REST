@@ -1,35 +1,13 @@
 import { NextFunction } from 'express';
-import * as uuid from 'uuid';
-
-export function isUUID(uid: string): boolean {
-    try {
-        uuid.parse(uid)
-        return true;
-    } catch (error) {
-        return false;
-    }
-}
-
-export function basicUUIDHandling(req: any, res: any): true | void {
-    if (req.params.uid === '69' || req.params.uid === '42') {
-        res.status(200).json({
-            message: 'You think you\'re funny, don\'t you?'
-        });
-        return true;
-    }
-    if (!isUUID(req.params.uid)) {
-        res.status(400).json({
-            message: 'Invalid UUID'
-        });
-        return true;
-    }
-}
+import mongoose from 'mongoose';
 
 export type LogoOptions = {
     square: string,
     [shape: string]: string,
     root: string
 };
+
+export const PROJECT_URL = process.env.URL || 'http://localhost:3030';
 
 export function logoHandler(req: any, res: any, next: NextFunction, options: LogoOptions, onlyLogo = false): void {
     if (onlyLogo) {
@@ -50,4 +28,29 @@ export function logoHandler(req: any, res: any, next: NextFunction, options: Log
     const error = new Error('Invalid shape') as Error & { status: number };
     error.status = 400;
     next(error);
+}
+
+export async function findUser(user_id: string): Promise<any | void> {
+    const myHeaders = new Headers();
+    myHeaders.append('Authorization', 'Bot ' + process.env.DISCORD_BOT_TOKEN);
+
+    const requestOptions: RequestInit = {
+        method: 'GET',
+        headers: myHeaders,
+        redirect: 'follow'
+    };
+
+    let toReturn: any = {};
+
+    await fetch('https://discord.com/api/v10/users/' + user_id, requestOptions)
+        .then(async (response) => {
+            try {
+                toReturn = JSON.parse(await response.text());
+            } catch (error) {
+                console.error(error);
+                toReturn = response.text();
+            }
+        }).catch(error => console.error(error));
+
+    return toReturn;
 }

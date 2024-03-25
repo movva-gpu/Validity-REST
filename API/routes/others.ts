@@ -2,7 +2,7 @@ import express from 'express';
 
 export const othersRouter = express.Router();
 
-othersRouter.get('/', (_req, _res, next) => {
+othersRouter.use('/', (_req, _res, next) => {
     next();
 });
 

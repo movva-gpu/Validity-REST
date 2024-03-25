@@ -28,4 +28,21 @@ for (const { path, options, onlyLogo = false } of logoRoutes) {
     });
 }
 
+logoRouter.options('/', (_req, res) => {
+    res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.status(200).json({
+        message: 'Welcome to the Validity REST API logo route',
+        routes: {
+            bot: {
+                square: 'GET /logo/bot',
+                portrait: 'GET /logo/bot/portrait'
+            },
+            REST: {
+                square: 'GET /logo/REST',
+                portrait: 'GET /logo/REST/portrait'
+            }
+        }
+    });
+});
+
 export default logoRouter;

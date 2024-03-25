@@ -2,7 +2,7 @@ import express from 'express';
 
 import Group from '../models/group';
 import System from '../models/system';
-import { findUser } from '../../utils';
+import { PROJECT_URL, findUser } from '../../utils';
 
 export const groupsRouter = express.Router();
 
@@ -14,15 +14,15 @@ groupsRouter.options('/', (_req, res) => {
             alters: {
                 all: {
                     type: 'GET',
-                    url: '/groups'
+                    url: PROJECT_URL + '/groups'
                 },
                 one: {
                     type: 'GET',
-                    url: '/groups/{groups_id}'
+                    url: PROJECT_URL + '/groups/{groups_id}'
                 },
                 create: {
                     type: 'POST',
-                    url: '/groups'
+                    url: PROJECT_URL + '/groups'
                 },
             }
         }
@@ -119,7 +119,7 @@ groupsRouter.post('/', async (req, res, next) => {
                             }).save()
                                 .then(group => {
                                     res.status(201).json({
-                                        message: 'POST /systems',
+                                        message: 'Created group successfully',
                                         createdGroup: /* group */ {
                                             _id: group._id,
                                             name: group.group_name,
@@ -130,7 +130,7 @@ groupsRouter.post('/', async (req, res, next) => {
                                             banner_url: group.group_banner_url,
                                             request: {
                                                 type: 'GET',
-                                                url: '/systems/' + group._id
+                                                url: PROJECT_URL + '/groups/' + group._id
                                             },
                                             created_at: group.group_created_at
                                         }

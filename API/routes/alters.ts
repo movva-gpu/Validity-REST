@@ -2,7 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 
 import Alter from '../models/alter';
-import { findUser } from '../../utils';
+import { PROJECT_URL, findUser } from '../../utils';
 import System from '../models/system';
 
 const altersRouter = express.Router();
@@ -15,15 +15,15 @@ altersRouter.options('/', (_req, res) => {
             alters: {
                 all: {
                     type: 'GET',
-                    url: '/alters'
+                    url: PROJECT_URL + '/alters'
                 },
                 one: {
                     type: 'GET',
-                    url: '/alters/{alters_id}'
+                    url: PROJECT_URL + '/alters/{alters_id}'
                 },
                 create: {
                     type: 'POST',
-                    url: '/alters'
+                    url: PROJECT_URL + '/alters'
                 },
             }
         }
@@ -120,7 +120,7 @@ altersRouter.post('/', async (req, res, next) => {
                             }).save()
                                 .then(alter => {
                                     res.status(201).json({
-                                        message: 'POST /systems',
+                                        message: 'Created alter successfully',
                                         createdAlter: /* alter */ {
                                             _id: alter._id,
                                             name: alter.alter_name,
@@ -131,7 +131,7 @@ altersRouter.post('/', async (req, res, next) => {
                                             banner_url: alter.alter_banner_url,
                                             request: {
                                                 type: 'GET',
-                                                url: '/systems/' + alter._id
+                                                url: PROJECT_URL + '/alters/' + alter._id
                                             },
                                             created_at: alter.alter_created_at
                                         }

@@ -69,7 +69,7 @@ systemsRouter.get('/', (req, res) => {
                         banner_url: alter.alter_banner_url,
                         request: {
                             type: 'GET',
-                            url: '/alters/' + alter._id
+                            url: PROJECT_URL + '/alters/' + alter._id
                         },
                         groups: group_names,
                         created_at: alter.alter_created_at,
@@ -96,7 +96,7 @@ systemsRouter.get('/', (req, res) => {
                         banner_url: group.group_banner_url,
                         request: {
                             type: 'GET',
-                            url: '/groups/' + group._id
+                            url: PROJECT_URL + '/groups/' + group._id
                         },
                         alters: alter_names,
                         created_at: group.group_created_at,
@@ -118,7 +118,7 @@ systemsRouter.get('/', (req, res) => {
                         banner_url: system.system_banner_url,
                         request: {
                             type: 'GET',
-                            url: '/systems/' + system._id
+                            url: PROJECT_URL + '/systems/' + system._id
                         },
                         alters: newAlters[system._id.toString()] || [],
                         groups: newGroups[system._id.toString()] || [],
@@ -163,7 +163,7 @@ systemsRouter.post('/', (req, res) => {
             system.save()
                 .then(result => {
                     res.status(201).json({
-                        message: 'POST /systems',
+                        message: 'Created system successfully',
                         createdSystem: /* system */ {
                             _id: system._id,
                             name: system.system_name,
@@ -175,7 +175,7 @@ systemsRouter.post('/', (req, res) => {
                             banner_url: system.system_banner_url,
                             request: {
                                 type: 'GET',
-                                url: '/systems/' + system._id
+                                url: PROJECT_URL + '/systems/' + system._id
                             },
                             created_at: system.system_created_at
                         }
@@ -231,8 +231,19 @@ systemsRouter.get('/:idOrName', (req, res) => {
         .then(system => {
             if (!system) return res.status(404).json({ error: 'System not found' });
             res.status(200).json({
-                message: `GET /systems/${req.params.idOrName}`,
-                system: system
+                _id: system._id,
+                name: system.system_name,
+                display_name: system.system_display_name,
+                userId: system.system_user_id,
+                desc: system.system_desc,
+                color: system.system_color,
+                avatar_url: system.system_avatar_url,
+                banner_url: system.system_banner_url,
+                request: {
+                    type: 'GET',
+                    url: PROJECT_URL + '/systems/' + system._id
+                },
+                created_at: system.system_created_at
             });
         })
         .catch(err => {
@@ -311,7 +322,7 @@ systemsRouter.patch('/:idOrName', async (req, res, next) => {
                             banner_url: system.system_banner_url,
                             request: {
                                 type: 'GET',
-                                url: '/systems/' + system._id
+                                url: PROJECT_URL + '/systems/' + system._id
                             },
                             created_at: system.system_created_at
                         }
@@ -349,7 +360,7 @@ systemsRouter.delete('/:idOrName', (req, res) => {
                 request: {
                     type: 'POST',
                     message: 'Create a new system',
-                    url: '/systems',
+                    url: PROJECT_URL + '/systems',
                     body: {
                         name: 'String',
                         display_name: 'String',

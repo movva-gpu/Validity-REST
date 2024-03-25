@@ -2,7 +2,7 @@
   "name": "validity-rest",
   "module": "app.ts",
   "type": "module",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "repository": "https://github.com/movva-gpu/Validity-REST",
   "author": {
     "name": "Danyella Strikann",

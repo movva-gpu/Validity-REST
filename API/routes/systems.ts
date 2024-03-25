@@ -188,13 +188,13 @@ systemsRouter.post('/', (req, res) => {
                         const newNames: string[] = [];
                         return await (async () => {
                             while (success !== 5 && i < 200) {
-                            const suffix = Math.floor(Math.random() * (i < 50 ? 1e2 : (i < 150 ? 1e3 : 1e4)));
-                            const newName = req.body.name + suffix;
-                            if (!await System.findOne({ system_name: newName }).exec() && !newNames.includes(newName) && suffix !== 0) {
-                                success++;
-                                newNames.push(newName);
-                            }
-                            i++;
+                                const suffix = Math.floor(Math.random() * (i < 50 ? 1e2 : (i < 150 ? 1e3 : 1e4)));
+                                const newName = req.body.name + suffix;
+                                if (!await System.findOne({ system_name: newName }).exec() && !newNames.includes(newName) && suffix !== 0) {
+                                    success++;
+                                    newNames.push(newName);
+                                }
+                                i++;
                             }
                         })().then(() => {
                             if (i >= 200) return res.status(500).json({
@@ -212,10 +212,10 @@ systemsRouter.post('/', (req, res) => {
                     res.status(IS_USER_ID_CONFLICT ? 409 : 500).json({
                         error:
                             IS_USER_ID_CONFLICT ? 'E11000: User ' + err.keyValue.system_user_id + ' already has a system' :
-                            errorCode + ': An error occurred, please try again later or submit an issue at ' +
-                            'https://github.com/movva-gpu/Validity-REST/issues/new' +
-                            '?title=' + errorCode +
-                            '&body=' + encodeURIComponent(err)
+                                errorCode + ': An error occurred, please try again later or submit an issue at ' +
+                                'https://github.com/movva-gpu/Validity-REST/issues/new' +
+                                '?title=' + errorCode +
+                                '&body=' + encodeURIComponent(err)
                     });
                 });
         });
@@ -225,8 +225,8 @@ systemsRouter.get('/:idOrName', (req, res) => {
     const show__v = req.query.__v === 'true' || false;
     System.findOne(
         mongoose.Types.ObjectId.isValid(req.params.idOrName) ?
-        { _id: req.params.idOrName } :
-        { system_name: req.params.idOrName })
+            { _id: req.params.idOrName } :
+            { system_name: req.params.idOrName })
         .select((show__v ? '' : '-__v')).exec()
         .then(system => {
             if (!system) return res.status(404).json({ error: 'System not found' });
@@ -280,8 +280,8 @@ systemsRouter.patch('/:idOrName', async (req, res, next) => {
     });
     System.findOne(
         mongoose.Types.ObjectId.isValid(req.params.idOrName) ?
-        { _id: req.params.idOrName } :
-        { system_name: req.params.idOrName }).exec()
+            { _id: req.params.idOrName } :
+            { system_name: req.params.idOrName }).exec()
         .then(system => {
             if (!system) return res.status(404).json({ error: 'System not found' });
 
@@ -333,9 +333,9 @@ systemsRouter.patch('/:idOrName', async (req, res, next) => {
                         message: err.code === 11000 ?
                             'E11000: ' + (err.keyValue.system_user_id ?
                                 'User ' + err.keyValue.system_user_id + ' already has a system' :
-                            err.keyValue.system_name ?
-                                'System name: ' + err.keyValue.system_name + ' already exists' :
-                                'An error occurred') :
+                                err.keyValue.system_name ?
+                                    'System name: ' + err.keyValue.system_name + ' already exists' :
+                                    'An error occurred') :
                             'An error occurred'
                     });
                     next()
@@ -352,8 +352,8 @@ systemsRouter.patch('/:idOrName', async (req, res, next) => {
 systemsRouter.delete('/:idOrName', (req, res) => {
     System.findOneAndDelete(
         mongoose.Types.ObjectId.isValid(req.params.idOrName) ?
-        { _id: req.params.idOrName } :
-        { system_name: req.params.idOrName }).exec()
+            { _id: req.params.idOrName } :
+            { system_name: req.params.idOrName }).exec()
         .then(() => {
             res.status(200).json({
                 message: `System deleted`,

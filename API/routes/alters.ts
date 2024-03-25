@@ -110,40 +110,40 @@ altersRouter.post('/', async (req, res, next) => {
                                 });
                             });
 
-                            new Alter({
-                                alter_name: req.body.name,
-                                alter_display_name: req.body.display_name,
-                                alter_desc: req.body.desc,
-                                alter_color: req.body.color,
-                                alter_avatar_url: req.body.avatar_url,
-                                alter_banner_url: req.body.banner_url,
-                            }).save()
-                                .then(alter => {
-                                    res.status(201).json({
-                                        message: 'Created alter successfully',
-                                        createdAlter: /* alter */ {
-                                            _id: alter._id,
-                                            name: alter.alter_name,
-                                            display_name: alter.alter_display_name,
-                                            desc: alter.alter_desc,
-                                            color: alter.alter_color,
-                                            avatar_url: alter.alter_avatar_url,
-                                            banner_url: alter.alter_banner_url,
-                                            request: {
-                                                type: 'GET',
-                                                url: PROJECT_URL + '/alters/' + alter._id
-                                            },
-                                            created_at: alter.alter_created_at
-                                        }
-                                    });
-                                })
-                                .catch(async err => {
-                                    if (err.code === 11000 && err.keyValue.system_name) {
-                                        let i = 0;
-                                        let success = 0;
-                                        const newNames: string[] = [];
-                                        return await (async () => {
-                                            while (success !== 5 && i < 200) {
+                        new Alter({
+                            alter_name: req.body.name,
+                            alter_display_name: req.body.display_name,
+                            alter_desc: req.body.desc,
+                            alter_color: req.body.color,
+                            alter_avatar_url: req.body.avatar_url,
+                            alter_banner_url: req.body.banner_url,
+                        }).save()
+                            .then(alter => {
+                                res.status(201).json({
+                                    message: 'Created alter successfully',
+                                    createdAlter: /* alter */ {
+                                        _id: alter._id,
+                                        name: alter.alter_name,
+                                        display_name: alter.alter_display_name,
+                                        desc: alter.alter_desc,
+                                        color: alter.alter_color,
+                                        avatar_url: alter.alter_avatar_url,
+                                        banner_url: alter.alter_banner_url,
+                                        request: {
+                                            type: 'GET',
+                                            url: PROJECT_URL + '/alters/' + alter._id
+                                        },
+                                        created_at: alter.alter_created_at
+                                    }
+                                });
+                            })
+                            .catch(async err => {
+                                if (err.code === 11000 && err.keyValue.system_name) {
+                                    let i = 0;
+                                    let success = 0;
+                                    const newNames: string[] = [];
+                                    return await (async () => {
+                                        while (success !== 5 && i < 200) {
                                             const suffix = Math.floor(Math.random() * (i < 50 ? 1e2 : (i < 150 ? 1e3 : 1e4)));
                                             const newName = req.body.name + suffix;
                                             if (!await Alter.findOne({ system_name: newName }).exec() && !newNames.includes(newName) && suffix !== 0) {
@@ -151,29 +151,29 @@ altersRouter.post('/', async (req, res, next) => {
                                                 newNames.push(newName);
                                             }
                                             i++;
-                                            }
-                                        })().then(() => {
-                                            if (i >= 200) return res.status(500).json({
-                                                message: 'An error occurred, please try again later'
-                                            });
-
-                                            res.status(409).json({
-                                                message: 'alter name: ' + req.body.name + ' already exists',
-                                                suggestions: newNames
-                                            });
+                                        }
+                                    })().then(() => {
+                                        if (i >= 200) return res.status(500).json({
+                                            message: 'An error occurred, please try again later'
                                         });
-                                    }
-                                    const IS_USER_ID_CONFLICT = err.code === 11000 && err.keyValue.system_user_id
-                                    const errorCode = err.code ? 'E' + err.code : 'Error';
-                                    res.status(IS_USER_ID_CONFLICT ? 409 : 500).json({
-                                        error:
-                                            IS_USER_ID_CONFLICT ? 'E11000: User ' + err.keyValue.system_user_id + ' already has a alter' :
+
+                                        res.status(409).json({
+                                            message: 'alter name: ' + req.body.name + ' already exists',
+                                            suggestions: newNames
+                                        });
+                                    });
+                                }
+                                const IS_USER_ID_CONFLICT = err.code === 11000 && err.keyValue.system_user_id
+                                const errorCode = err.code ? 'E' + err.code : 'Error';
+                                res.status(IS_USER_ID_CONFLICT ? 409 : 500).json({
+                                    error:
+                                        IS_USER_ID_CONFLICT ? 'E11000: User ' + err.keyValue.system_user_id + ' already has a alter' :
                                             errorCode + ': An error occurred, please try again later or submit an issue at ' +
                                             'https://github.com/movva-gpu/Validity-REST/issues/new' +
                                             '?title=' + errorCode +
                                             '&body=' + encodeURIComponent(err)
-                                    });
                                 });
+                            });
                     }
                 })
                 .catch(err => {

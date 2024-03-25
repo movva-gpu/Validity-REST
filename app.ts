@@ -25,7 +25,7 @@ mongoose.connect(uri).then(() => {
 
 const accessLogStream = fs.createWriteStream(__dirname + '/access.log', { flags: 'a' });
 
-app.use(morgan(process.env.PRODUCTION === 'true' ? 'common': 'dev', { stream: process.env.PRODUCTION === 'true' ? accessLogStream: process.stdout }));
+app.use(morgan(process.env.PRODUCTION === 'true' ? 'common' : 'dev', { stream: process.env.PRODUCTION === 'true' ? accessLogStream : process.stdout }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 

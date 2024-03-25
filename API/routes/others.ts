@@ -6,7 +6,7 @@ othersRouter.use('/', (_req, _res, next) => {
     next();
 });
 
-othersRouter.get([ '/humans.txt', '/humans', '/authors', '/author', '/authors.txt', '/author.txt' ],
+othersRouter.get(['/humans.txt', '/humans', '/authors', '/author', '/authors.txt', '/author.txt'],
     (_req, res) => {
         res.sendFile('humans.txt', { root: 'assets' });
     }

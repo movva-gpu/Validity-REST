@@ -109,40 +109,40 @@ groupsRouter.post('/', async (req, res, next) => {
                                 });
                             });
 
-                            new Group({
-                                group_name: req.body.name,
-                                group_display_name: req.body.display_name,
-                                group_desc: req.body.desc,
-                                group_color: req.body.color,
-                                group_avatar_url: req.body.avatar_url,
-                                group_banner_url: req.body.banner_url,
-                            }).save()
-                                .then(group => {
-                                    res.status(201).json({
-                                        message: 'Created group successfully',
-                                        createdGroup: /* group */ {
-                                            _id: group._id,
-                                            name: group.group_name,
-                                            display_name: group.group_display_name,
-                                            desc: group.group_desc,
-                                            color: group.group_color,
-                                            avatar_url: group.group_avatar_url,
-                                            banner_url: group.group_banner_url,
-                                            request: {
-                                                type: 'GET',
-                                                url: PROJECT_URL + '/groups/' + group._id
-                                            },
-                                            created_at: group.group_created_at
-                                        }
-                                    });
-                                })
-                                .catch(async err => {
-                                    if (err.code === 11000 && err.keyValue.system_name) {
-                                        let i = 0;
-                                        let success = 0;
-                                        const newNames: string[] = [];
-                                        return await (async () => {
-                                            while (success !== 5 && i < 200) {
+                        new Group({
+                            group_name: req.body.name,
+                            group_display_name: req.body.display_name,
+                            group_desc: req.body.desc,
+                            group_color: req.body.color,
+                            group_avatar_url: req.body.avatar_url,
+                            group_banner_url: req.body.banner_url,
+                        }).save()
+                            .then(group => {
+                                res.status(201).json({
+                                    message: 'Created group successfully',
+                                    createdGroup: /* group */ {
+                                        _id: group._id,
+                                        name: group.group_name,
+                                        display_name: group.group_display_name,
+                                        desc: group.group_desc,
+                                        color: group.group_color,
+                                        avatar_url: group.group_avatar_url,
+                                        banner_url: group.group_banner_url,
+                                        request: {
+                                            type: 'GET',
+                                            url: PROJECT_URL + '/groups/' + group._id
+                                        },
+                                        created_at: group.group_created_at
+                                    }
+                                });
+                            })
+                            .catch(async err => {
+                                if (err.code === 11000 && err.keyValue.system_name) {
+                                    let i = 0;
+                                    let success = 0;
+                                    const newNames: string[] = [];
+                                    return await (async () => {
+                                        while (success !== 5 && i < 200) {
                                             const suffix = Math.floor(Math.random() * (i < 50 ? 1e2 : (i < 150 ? 1e3 : 1e4)));
                                             const newName = req.body.name + suffix;
                                             if (!await Group.findOne({ system_name: newName }).exec() && !newNames.includes(newName) && suffix !== 0) {
@@ -150,29 +150,29 @@ groupsRouter.post('/', async (req, res, next) => {
                                                 newNames.push(newName);
                                             }
                                             i++;
-                                            }
-                                        })().then(() => {
-                                            if (i >= 200) return res.status(500).json({
-                                                message: 'An error occurred, please try again later'
-                                            });
-
-                                            res.status(409).json({
-                                                message: 'group name: ' + req.body.name + ' already exists',
-                                                suggestions: newNames
-                                            });
+                                        }
+                                    })().then(() => {
+                                        if (i >= 200) return res.status(500).json({
+                                            message: 'An error occurred, please try again later'
                                         });
-                                    }
-                                    const IS_USER_ID_CONFLICT = err.code === 11000 && err.keyValue.system_user_id
-                                    const errorCode = err.code ? 'E' + err.code : 'Error';
-                                    res.status(IS_USER_ID_CONFLICT ? 409 : 500).json({
-                                        error:
-                                            IS_USER_ID_CONFLICT ? 'E11000: User ' + err.keyValue.system_user_id + ' already has a group' :
+
+                                        res.status(409).json({
+                                            message: 'group name: ' + req.body.name + ' already exists',
+                                            suggestions: newNames
+                                        });
+                                    });
+                                }
+                                const IS_USER_ID_CONFLICT = err.code === 11000 && err.keyValue.system_user_id
+                                const errorCode = err.code ? 'E' + err.code : 'Error';
+                                res.status(IS_USER_ID_CONFLICT ? 409 : 500).json({
+                                    error:
+                                        IS_USER_ID_CONFLICT ? 'E11000: User ' + err.keyValue.system_user_id + ' already has a group' :
                                             errorCode + ': An error occurred, please try again later or submit an issue at ' +
                                             'https://github.com/movva-gpu/Validity-REST/issues/new' +
                                             '?title=' + errorCode +
                                             '&body=' + encodeURIComponent(err)
-                                    });
                                 });
+                            });
                     }
                 })
                 .catch(err => {

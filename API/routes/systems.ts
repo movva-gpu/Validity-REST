@@ -16,23 +16,23 @@ systemsRouter.options('/', (_req, res) => {
             systems: {
                 all: {
                     type: 'GET',
-                    url: PROJECT_URL + '/systems',
+                    url: PROJECT_URL + '/systems'
                 },
                 one: {
                     type: 'GET',
-                    url: PROJECT_URL + '/systems/{system_id}|{system_name}',
+                    url: PROJECT_URL + '/systems/{system_id}|{system_name}'
                 },
                 create: {
                     type: 'POST',
-                    url: PROJECT_URL + '/systems',
+                    url: PROJECT_URL + '/systems'
                 },
                 update: {
                     type: 'PATCH',
-                    url: PROJECT_URL + '/systems/{system_id}|{system_name}',
+                    url: PROJECT_URL + '/systems/{system_id}|{system_name}'
                 },
                 delete: {
                     type: 'DELETE',
-                    url: PROJECT_URL + '/systems/{system_id}|{system_name}',
+                    url: PROJECT_URL + '/systems/{system_id}|{system_name}'
                 }
             }
         }
@@ -40,8 +40,9 @@ systemsRouter.options('/', (_req, res) => {
 });
 
 systemsRouter.get('/', (req, res) => {
-    const systems = System.find().exec()
-        .then(async (systems) => {
+    const systems = System.find()
+        .exec()
+        .then(async systems => {
             const newAlters: { [key: string]: unknown[] } = {};
             const newGroups: { [key: string]: unknown[] } = {};
             const group_names: string[] = [];
@@ -56,7 +57,7 @@ systemsRouter.get('/', (req, res) => {
                         for (const group_id of alter.group_ids) {
                             const group = await Group.findOne({ _id: group_id }).exec();
                             if (!group || !group.group_name) return;
-                            group_names.push(group.group_name.toString())
+                            group_names.push(group.group_name.toString());
                         }
                     }
                     // @ts-ignore
@@ -72,8 +73,8 @@ systemsRouter.get('/', (req, res) => {
                             url: PROJECT_URL + '/alters/' + alter._id
                         },
                         groups: group_names,
-                        created_at: alter.alter_created_at,
-                    }
+                        created_at: alter.alter_created_at
+                    };
                     newAlters[system._id.toString()].push(alter);
                 }
                 for (const group_id of system.group_ids) {
@@ -99,14 +100,14 @@ systemsRouter.get('/', (req, res) => {
                             url: PROJECT_URL + '/groups/' + group._id
                         },
                         alters: alter_names,
-                        created_at: group.group_created_at,
-                    }
+                        created_at: group.group_created_at
+                    };
                     newGroups[system._id.toString()].push(group);
                 }
             }
             res.status(200).json({
                 count: systems.length,
-                systems: systems.map((system) => {
+                systems: systems.map(system => {
                     return {
                         _id: system._id,
                         name: system.system_name,
@@ -136,98 +137,113 @@ systemsRouter.get('/', (req, res) => {
 });
 
 systemsRouter.post('/', (req, res) => {
-    if (!req.body.name) return res.status(400).json({
-        error: 'The field "name" is required'
-    });
-    if (!req.body.userId) return res.status(400).json({
-        error: 'The field "userId" is required'
-    });
+    if (!req.body.name)
+        return res.status(400).json({
+            error: 'The field "name" is required'
+        });
+    if (!req.body.userId)
+        return res.status(400).json({
+            error: 'The field "userId" is required'
+        });
 
-    findUser(req.body.userId)
-        .then(user => {
-            if (!user || user.code) return res.status(404).json({
+    findUser(req.body.userId).then(user => {
+        if (!user || user.code)
+            return res.status(404).json({
                 error: 'User ID not found' || user.message
             });
 
-            const system = new System({
-                system_name: req.body.name,
-                system_display_name: req.body.display_name,
-                system_user_id: req.body.userId,
-                system_desc: req.body.desc,
-                system_color: req.body.color,
-                system_avatar_url: req.body.avatar_url,
-                system_banner_url: req.body.banner_url,
-                alter_ids: req.body.alter_ids,
-                group_ids: req.body.group_ids
-            });
-            system.save()
-                .then(result => {
-                    res.status(201).json({
-                        message: 'Created system successfully',
-                        createdSystem: /* system */ {
-                            _id: system._id,
-                            name: system.system_name,
-                            display_name: system.system_display_name,
-                            userId: system.system_user_id,
-                            desc: system.system_desc,
-                            color: system.system_color,
-                            avatar_url: system.system_avatar_url,
-                            banner_url: system.system_banner_url,
-                            request: {
-                                type: 'GET',
-                                url: PROJECT_URL + '/systems/' + system._id
-                            },
-                            created_at: system.system_created_at
-                        }
-                    });
-                })
-                .catch(async err => {
-                    if (err.code === 11000 && err.keyValue.system_name) {
-                        let i = 0;
-                        let success = 0;
-                        const newNames: string[] = [];
-                        return await (async () => {
-                            while (success !== 5 && i < 200) {
-                                const suffix = Math.floor(Math.random() * (i < 50 ? 1e2 : (i < 150 ? 1e3 : 1e4)));
-                                const newName = req.body.name + suffix;
-                                if (!await System.findOne({ system_name: newName }).exec() && !newNames.includes(newName) && suffix !== 0) {
-                                    success++;
-                                    newNames.push(newName);
-                                }
-                                i++;
+        const system = new System({
+            system_name: req.body.name,
+            system_display_name: req.body.display_name,
+            system_user_id: req.body.userId,
+            system_desc: req.body.desc,
+            system_color: req.body.color,
+            system_avatar_url: req.body.avatar_url,
+            system_banner_url: req.body.banner_url,
+            alter_ids: req.body.alter_ids,
+            group_ids: req.body.group_ids
+        });
+        system
+            .save()
+            .then(result => {
+                res.status(201).json({
+                    message: 'Created system successfully',
+                    createdSystem: /* system */ {
+                        _id: system._id,
+                        name: system.system_name,
+                        display_name: system.system_display_name,
+                        userId: system.system_user_id,
+                        desc: system.system_desc,
+                        color: system.system_color,
+                        avatar_url: system.system_avatar_url,
+                        banner_url: system.system_banner_url,
+                        request: {
+                            type: 'GET',
+                            url: PROJECT_URL + '/systems/' + system._id
+                        },
+                        created_at: system.system_created_at
+                    }
+                });
+            })
+            .catch(async err => {
+                if (err.code === 11000 && err.keyValue.system_name) {
+                    let i = 0;
+                    let success = 0;
+                    const newNames: string[] = [];
+                    return await (async () => {
+                        while (success !== 5 && i < 200) {
+                            const suffix = Math.floor(
+                                Math.random() * (i < 50 ? 1e2 : i < 150 ? 1e3 : 1e4)
+                            );
+                            const newName = req.body.name + suffix;
+                            if (
+                                !(await System.findOne({ system_name: newName }).exec()) &&
+                                !newNames.includes(newName) &&
+                                suffix !== 0
+                            ) {
+                                success++;
+                                newNames.push(newName);
                             }
-                        })().then(() => {
-                            if (i >= 200) return res.status(500).json({
+                            i++;
+                        }
+                    })().then(() => {
+                        if (i >= 200)
+                            return res.status(500).json({
                                 message: 'An error occurred, please try again later'
                             });
 
-                            res.status(409).json({
-                                message: 'System name: ' + req.body.name + ' already exists',
-                                suggestions: newNames
-                            });
+                        res.status(409).json({
+                            message: 'System name: ' + req.body.name + ' already exists',
+                            suggestions: newNames
                         });
-                    }
-                    const IS_USER_ID_CONFLICT = err.code === 11000 && err.keyValue.system_user_id
-                    const errorCode = err.code ? 'E' + err.code : 'Error';
-                    res.status(IS_USER_ID_CONFLICT ? 409 : 500).json({
-                        error:
-                            IS_USER_ID_CONFLICT ? 'E11000: User ' + err.keyValue.system_user_id + ' already has a system' :
-                                errorCode + ': An error occurred, please try again later or submit an issue at ' +
-                                'https://github.com/movva-gpu/Validity-REST/issues/new' +
-                                '?title=' + errorCode +
-                                '&body=' + encodeURIComponent(err)
                     });
+                }
+                const IS_USER_ID_CONFLICT = err.code === 11000 && err.keyValue.system_user_id;
+                const errorCode = err.code ? 'E' + err.code : 'Error';
+                res.status(IS_USER_ID_CONFLICT ? 409 : 500).json({
+                    error: IS_USER_ID_CONFLICT
+                        ? 'E11000: User ' + err.keyValue.system_user_id + ' already has a system'
+                        : errorCode +
+                          ': An error occurred, please try again later or submit an issue at ' +
+                          'https://github.com/movva-gpu/Validity-REST/issues/new' +
+                          '?title=' +
+                          errorCode +
+                          '&body=' +
+                          encodeURIComponent(err)
                 });
-        });
+            });
+    });
 });
 
 systemsRouter.get('/:idOrName', (req, res) => {
     const show__v = req.query.__v === 'true' || false;
     System.findOne(
-        mongoose.Types.ObjectId.isValid(req.params.idOrName) ?
-            { _id: req.params.idOrName } :
-            { system_name: req.params.idOrName })
-        .select((show__v ? '' : '-__v')).exec()
+        mongoose.Types.ObjectId.isValid(req.params.idOrName)
+            ? { _id: req.params.idOrName }
+            : { system_name: req.params.idOrName }
+    )
+        .select(show__v ? '' : '-__v')
+        .exec()
         .then(system => {
             if (!system) return res.status(404).json({ error: 'System not found' });
             res.status(200).json({
@@ -257,31 +273,50 @@ systemsRouter.get('/:idOrName', (req, res) => {
 // TODO: add get for /:idOrName/:field
 
 systemsRouter.patch('/:idOrName', async (req, res, next) => {
-    if (!req.body.userId) return res.status(400).json({
-        error: 'The field "userId" is required'
-    });
+    if (!req.body.userId)
+        return res.status(400).json({
+            error: 'The field "userId" is required'
+        });
 
-    if (!((body: any): boolean => {
-        if (!body || !body.props || !Array.isArray(body.props)) {
-            return false;
-        }
-
-        const validProps = ['name', 'display_name', 'userId', 'desc', 'color', 'avatar_url', 'banner_url', 'alter_ids', 'group_ids'];
-
-        for (const prop of body.props) {
-            if (!validProps.includes(prop.propName) || (prop.propName === 'userId' && typeof prop.value !== 'string')) {
+    if (
+        !((body: any): boolean => {
+            if (!body || !body.props || !Array.isArray(body.props)) {
                 return false;
             }
-        }
 
-        return typeof body.userId === 'string';
-    })(req.body)) return res.status(400).json({
-        error: 'Invalid body'
-    });
+            const validProps = [
+                'name',
+                'display_name',
+                'userId',
+                'desc',
+                'color',
+                'avatar_url',
+                'banner_url',
+                'alter_ids',
+                'group_ids'
+            ];
+
+            for (const prop of body.props) {
+                if (
+                    !validProps.includes(prop.propName) ||
+                    (prop.propName === 'userId' && typeof prop.value !== 'string')
+                ) {
+                    return false;
+                }
+            }
+
+            return typeof body.userId === 'string';
+        })(req.body)
+    )
+        return res.status(400).json({
+            error: 'Invalid body'
+        });
     System.findOne(
-        mongoose.Types.ObjectId.isValid(req.params.idOrName) ?
-            { _id: req.params.idOrName } :
-            { system_name: req.params.idOrName }).exec()
+        mongoose.Types.ObjectId.isValid(req.params.idOrName)
+            ? { _id: req.params.idOrName }
+            : { system_name: req.params.idOrName }
+    )
+        .exec()
         .then(system => {
             if (!system) return res.status(404).json({ error: 'System not found' });
 
@@ -307,7 +342,8 @@ systemsRouter.patch('/:idOrName', async (req, res, next) => {
                 }
             }
 
-            system.save()
+            system
+                .save()
                 .then(() => {
                     res.status(200).json({
                         message: 'System updated',
@@ -330,15 +366,21 @@ systemsRouter.patch('/:idOrName', async (req, res, next) => {
                 })
                 .catch(err => {
                     res.status(500).json({
-                        message: err.code === 11000 ?
-                            'E11000: ' + (err.keyValue.system_user_id ?
-                                'User ' + err.keyValue.system_user_id + ' already has a system' :
-                                err.keyValue.system_name ?
-                                    'System name: ' + err.keyValue.system_name + ' already exists' :
-                                    'An error occurred') :
-                            'An error occurred'
+                        message:
+                            err.code === 11000
+                                ? 'E11000: ' +
+                                  (err.keyValue.system_user_id
+                                      ? 'User ' +
+                                        err.keyValue.system_user_id +
+                                        ' already has a system'
+                                      : err.keyValue.system_name
+                                        ? 'System name: ' +
+                                          err.keyValue.system_name +
+                                          ' already exists'
+                                        : 'An error occurred')
+                                : 'An error occurred'
                     });
-                    next()
+                    next();
                 });
         })
         .catch(err => {
@@ -351,9 +393,11 @@ systemsRouter.patch('/:idOrName', async (req, res, next) => {
 
 systemsRouter.delete('/:idOrName', (req, res) => {
     System.findOneAndDelete(
-        mongoose.Types.ObjectId.isValid(req.params.idOrName) ?
-            { _id: req.params.idOrName } :
-            { system_name: req.params.idOrName }).exec()
+        mongoose.Types.ObjectId.isValid(req.params.idOrName)
+            ? { _id: req.params.idOrName }
+            : { system_name: req.params.idOrName }
+    )
+        .exec()
         .then(() => {
             res.status(200).json({
                 message: `System deleted`,

@@ -10,11 +10,9 @@ const systemSchema = new mongoose.Schema({
     system_banner_url: String,
     alter_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Alter' }],
     group_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }],
-    system_created_at: { type: Date, default: Date.now },
+    system_created_at: { type: Date, default: Date.now }
 });
 
 const System = mongoose.model('System', systemSchema);
 
 export default System;
-
-

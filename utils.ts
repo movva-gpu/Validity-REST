@@ -2,14 +2,20 @@ import { NextFunction } from 'express';
 import mongoose from 'mongoose';
 
 export type LogoOptions = {
-    square: string,
-    [shape: string]: string,
-    root: string
+    square: string;
+    [shape: string]: string;
+    root: string;
 };
 
 export const PROJECT_URL = process.env.URL || 'http://localhost:3030';
 
-export function logoHandler(req: any, res: any, next: NextFunction, options: LogoOptions, onlyLogo = false): void {
+export function logoHandler(
+    req: any,
+    res: any,
+    next: NextFunction,
+    options: LogoOptions,
+    onlyLogo = false
+): void {
     if (onlyLogo) {
         res.sendFile(options?.square, { root: options.root });
         return;
@@ -43,14 +49,15 @@ export async function findUser(user_id: string): Promise<any | void> {
     let toReturn: any = {};
 
     await fetch('https://discord.com/api/v10/users/' + user_id, requestOptions)
-        .then(async (response) => {
+        .then(async response => {
             try {
                 toReturn = JSON.parse(await response.text());
             } catch (error) {
                 console.error(error);
                 toReturn = response.text();
             }
-        }).catch(error => console.error(error));
+        })
+        .catch(error => console.error(error));
 
     return toReturn;
 }

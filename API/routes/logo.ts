@@ -16,10 +16,10 @@ const RESTLogoOptions: LogoOptions = {
 };
 
 const logoRoutes = [
-    { path: ["/", "/bot"], options: botLogoOptions, onlyLogo: true },
-    { path: "/bot/:shape", options: botLogoOptions },
-    { path: "/REST", options: RESTLogoOptions, onlyLogo: true },
-    { path: "/REST/:shape", options: RESTLogoOptions },
+    { path: ['/', '/bot'], options: botLogoOptions, onlyLogo: true },
+    { path: '/bot/:shape', options: botLogoOptions },
+    { path: '/REST', options: RESTLogoOptions, onlyLogo: true },
+    { path: '/REST/:shape', options: RESTLogoOptions }
 ];
 
 for (const { path, options, onlyLogo = false } of logoRoutes) {

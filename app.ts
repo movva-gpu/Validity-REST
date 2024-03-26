@@ -13,25 +13,38 @@ import { PROJECT_URL } from './utils';
 
 const app = express();
 const port = process.env.PORT || 3030;
-const uri = 'mongodb+srv://' +
-    encodeURIComponent(process.env.MONGO_USER as string) + ':' +
-    encodeURIComponent(process.env.MONGO_PASSWORD as string) + '@validity-cluster.e4vgca6.mongodb.net/?retryWrites=true&w=majority&appName=validity-cluster';
+const uri =
+    'mongodb+srv://' +
+    encodeURIComponent(process.env.MONGO_USER as string) +
+    ':' +
+    encodeURIComponent(process.env.MONGO_PASSWORD as string) +
+    '@validity-cluster.e4vgca6.mongodb.net/?retryWrites=true&w=majority&appName=validity-cluster';
 
-mongoose.connect(uri).then(() => {
-    console.log('Connected to database');
-}).catch((error) => {
-    console.log('[mongoose] Error connecting to database: ' + error);
-});
+mongoose
+    .connect(uri)
+    .then(() => {
+        console.log('Connected to database');
+    })
+    .catch(error => {
+        console.log('[mongoose] Error connecting to database: ' + error);
+    });
 
 const accessLogStream = fs.createWriteStream(__dirname + '/access.log', { flags: 'a' });
 
-app.use(morgan(process.env.PRODUCTION === 'true' ? 'common' : 'dev', { stream: process.env.PRODUCTION === 'true' ? accessLogStream : process.stdout }));
+app.use(
+    morgan(process.env.PRODUCTION === 'true' ? 'common' : 'dev', {
+        stream: process.env.PRODUCTION === 'true' ? accessLogStream : process.stdout
+    })
+);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    );
     next();
 });
 
@@ -53,7 +66,7 @@ function options(_req: any, res: any) {
             alters_url: PROJECT_URL + '/alters',
             alter_url: PROJECT_URL + '/alters/{alter_id}|{alter_name}',
             logos: PROJECT_URL + '/logo',
-            'humans.txt': PROJECT_URL + '/humans.txt',
+            'humans.txt': PROJECT_URL + '/humans.txt'
         }
     });
 }

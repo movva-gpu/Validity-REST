@@ -1,19 +1,18 @@
-tabWidth: 4,
-useTabs: false,
-singleQuote: true,
-trailingComma: "none",
-semi: true,
-arrowParens: "avoid",
-endOfLine: "lf",
-printWidth: 100,
-proseWrap: "preserve",
-singleAttributePerLine: false,
+tabWidth: 4
+useTabs: false
+singleQuote: true
+trailingComma: "none"
+semi: true
+arrowParens: "avoid"
+endOfLine: "lf"
+printWidth: 100
+proseWrap: "preserve"
+singleAttributePerLine: false
 overrides:
   - files:
     - "*.json"
     - ".prettierrc"
     - "*.yml"
     - "*.yaml"
-  - options:
-    - tabWidth: 2
-
+    options:
+      tabWidth: 2

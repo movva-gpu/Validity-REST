@@ -5,7 +5,7 @@ LABEL authors="Danyella Strikann"
 
 COPY API API/
 COPY assets assets/
-COPY .env .env/
+COPY .env .
 COPY app.ts .
 COPY utils.ts .
 COPY bun.lockb .

@@ -21,7 +21,7 @@ docker build -t validity-rest .
 
 Then to run the image:
 ```bash
-docker run -d -p 82:8080 validity-rest
+docker run -d -p 80:8080 validity-rest
 ```
 
 This project was created using `bun init` in bun v1.0.32. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
